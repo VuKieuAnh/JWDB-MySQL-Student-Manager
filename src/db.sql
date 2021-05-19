@@ -139,8 +139,10 @@ from point
 group by name_course;
 
 # Đưa ra khóa học có điểm trung bình cao nhất
-select name_course, max(avg_point)
-from (select name_course, avg(point) as avg_point
-      from point
-               join course c on point.id_course = c.id_course
-      group by name_course) as maxpoint;
+select name_course, avg(point) as avg_point
+from point
+         join course c on point.id_course = c.id_course
+group by name_course having  avg_point >= ALL
+                             (SELECT avg(point) as avg_point from point
+                                                                      join course c on point.id_course = c.id_course
+                              group by name_course);
